@@ -1,26 +1,36 @@
-import Foundation
+import UIKit
 
-public final class Form<State, Event> {
-    public typealias Reducer = (State, Event) -> State
+public final class Form<State> {
+
+    public let view: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+
     private var state: State
     private var subscribers: [(State)->Void] = []
-    private var reducer: Reducer
 
-    public init(state: State, reducer: @escaping Reducer) {
+    public init(state: State) {
         self.state = state
-        self.reducer = reducer
     }
 
-    public func apply(_ event: Event) {
-        state = reducer(state, event)
+    public func apply(_ changes: (inout State)->Void) {
+        changes(&state)
         subscribers.forEach { subscriber in
             subscriber(state)
         }
     }
 
-    public func subscribe(_ subscriber: @escaping (State)->Void) {
+    public func add(_ cell: UIView, subscriber: @escaping (State)->Void) {
+        add(cell)
         subscribers.append(subscriber)
         subscriber(state)
     }
-}
 
+    public func add(_ cell: UIView) {
+        view.addArrangedSubview(cell)
+        cell.translatesAutoresizingMaskIntoConstraints = false
+    }
+}
