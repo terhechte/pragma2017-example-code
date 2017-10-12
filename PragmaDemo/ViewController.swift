@@ -5,9 +5,22 @@ struct Cinnamon {
     var name: String
 }
 
+enum Event {
+    case increaseAmount
+}
+
+func eventReducer(state: Cinnamon, event: Event) -> Cinnamon {
+    var newState = state
+    switch event {
+    case .increaseAmount: newState.amount += 10
+    }
+    return newState
+}
+
 class ViewController: UIViewController {
 
-    let form = Form(state: Cinnamon(amount: 0, name: "Ceylon"))
+    let form = Form(state: Cinnamon(amount: 0, name: "Ceylon"),
+                    reducer: eventReducer)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +39,7 @@ class ViewController: UIViewController {
     }
 
     @objc func didTapButton(sender: UIButton) {
-        form.apply { $0.amount += 10 }
+        form.apply(.increaseAmount)
     }
 }
 
