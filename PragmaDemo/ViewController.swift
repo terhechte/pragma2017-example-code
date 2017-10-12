@@ -19,20 +19,24 @@ class ViewController: UIViewController {
             cinnamonSelector.selectedSegmentIndex = state.type.rawValue
         }
 
-        let cinnamonSlider = UISlider()
-        cinnamonSlider.minimumValue = 0.0
-        cinnamonSlider.maximumValue = 200.0
-        cinnamonSlider.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        cinnamonSlider.addTarget(self, action: #selector(self.didChangeCinnamonSlider(sender:)), for: .valueChanged)
-        formBuilder.add(cinnamonSlider) { (state) in
-            cinnamonSlider.value = state.amount
-        }
+        do {
+            let parentForm = formBuilder.addForm(axis: .horizontal)
+            let cinnamonSlider = UISlider()
+            cinnamonSlider.minimumValue = 0.0
+            cinnamonSlider.maximumValue = 200.0
+            cinnamonSlider.widthAnchor.constraint(equalToConstant: 150).isActive = true
+            cinnamonSlider.addTarget(self, action: #selector(self.didChangeCinnamonSlider(sender:)), for: .valueChanged)
+            parentForm.add(cinnamonSlider) { (state) in
+                cinnamonSlider.value = state.amount
+            }
 
-        let cinnamonValue = UITextField()
-        let formatter = NumberFormatter()
-        formatter.positiveFormat = "###0g"
-        formBuilder.add(cinnamonValue) { (state) in
-            cinnamonValue.text = formatter.string(from: NSNumber(value: state.amount))
+            let cinnamonValue = UITextField()
+            let formatter = NumberFormatter()
+            formatter.positiveFormat = "###0g"
+            cinnamonValue.widthAnchor.constraint(equalToConstant: 50).isActive = true
+            parentForm.add(cinnamonValue) { (state) in
+                cinnamonValue.text = formatter.string(from: NSNumber(value: state.amount))
+            }
         }
 
         let warning = UITextField()
