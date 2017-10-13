@@ -12,7 +12,7 @@ public final class Form<State> {
     private var state: State
     private var subscribers: [(State)->Void] = []
     private var forms: [Form<State>] = []
-    private var parentForm: Form<State>?
+    private var rootForm: Form<State>?
 
     public init(state: State, axis: UILayoutConstraintAxis = .vertical) {
         self.state = state
@@ -20,7 +20,7 @@ public final class Form<State> {
     }
 
     public func apply(_ changes: (inout State)->Void) {
-        let form = parentForm ?? self
+        let form = rootForm ?? self
         changes(&form.state)
         form.subscribers.forEach { subscriber in
             subscriber(form.state)
@@ -28,7 +28,7 @@ public final class Form<State> {
     }
 
     public func add(_ cell: UIView, subscriber: @escaping (State)->Void) {
-        let form = parentForm ?? self
+        let form = rootForm ?? self
         add(cell)
         form.subscribers.append(subscriber)
         subscriber(form.state)
@@ -41,7 +41,7 @@ public final class Form<State> {
 
     public func addForm(axis: UILayoutConstraintAxis) -> Form<State> {
         let newForm = Form(state: self.state, axis: axis)
-        newForm.parentForm = parentForm ?? self
+        newForm.rootForm = rootForm ?? self
         view.addArrangedSubview(newForm.view)
         forms.append(newForm)
         return newForm

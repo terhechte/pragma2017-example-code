@@ -70,10 +70,9 @@ class ViewController: UIViewController {
     }
 
     @objc func didChangeCinnamonType(sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 1: formBuilder.apply({ $0.type = .ceylon })
-        default: formBuilder.apply({ $0.type = .cassia })
-        }
+        guard let newType = CinnamonCalculator.CinnamonType(rawValue: sender.selectedSegmentIndex)
+            else { return }
+        formBuilder.apply({ $0.type = newType })
     }
 
     @objc func didChangeCinnamonSlider(sender: UISlider) {
